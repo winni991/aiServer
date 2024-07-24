@@ -1,0 +1,74 @@
+jwt:
+  signing-key: f4d2d6bd-70df-42e2-b699-c71f0b57c666
+  expires-time: 7d
+  buffer-time: 1d
+  issuer: aha
+local:
+  path: uploads/file
+  store-path: uploads/file
+mysql:
+  prefix: ""
+  port: "3306"
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  db-name: aha002
+  username: root
+  password: "123456"
+  path: ""
+  engine: ""
+  log-mode: error
+  max-idle-conns: 10
+  max-open-conns: 100
+  singular: false
+  log-zap: false
+redis:
+  addr: 127.0.0.1:6379
+  password: ""
+  db: 0
+system:
+  oss-type: local
+  router-prefix: ""
+  addr: 9999
+  iplimit-count: 15000
+  iplimit-time: 3600
+  use-redis: false
+zap:
+  level: info
+  prefix: '[aiServer]'
+  format: console
+  director: log
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  show-line: true
+  log-in-console: true
+  retention-day: -1
+aliyun-oss:
+  endpoint: yourEndpoint
+  access-key-id: yourAccessKeyId
+  access-key-secret: yourAccessKeySecret
+  bucket-name: yourBucketName
+  bucket-url: yourBucketUrl
+  base-path: yourBasePath
+aws-s3:
+  bucket: xxxxx-10005608
+  region: ap-shanghai
+  endpoint: ""
+  secret-id: your-secret-id
+  secret-key: your-secret-key
+  base-url: ""
+  path-prefix: aiServer
+  s3-force-path-style: false
+  disable-ssl: false
+captcha:
+  key-long: 6
+  img-width: 240
+  img-height: 80
+  open-captcha: 10
+  open-captcha-timeout: 3600
+email:
+  to: xxx@qq.com
+  from: xxx@163.com
+  host: smtp.163.com
+  secret: xxx
+  nickname: test
+  port: 465
+  is-ssl: true

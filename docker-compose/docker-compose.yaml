@@ -1,0 +1,80 @@
+version: "3"
+
+# 声明一个名为network的networks,subnet为network的子网地址,默认网关是177.7.0.1
+networks:
+  network:
+    ipam:
+      driver: default
+      config:
+        - subnet: '177.7.0.0/16'
+
+# 设置mysql，redis持久化保存
+volumes:
+  mysql:
+  redis:
+
+services:
+  server:
+    build:
+      context: ./
+      dockerfile: server/Dockerfile
+    container_name: ai-server
+    hostname: ai-server
+    restart: always
+    ports:
+      - '9999:9999'
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./logs:/var/log # 将容器内的 /var/log 目录映射到宿主机的 ./logs 目录
+    links:
+      - mysql
+      - redis
+    networks:
+      network:
+        ipv4_address: 177.7.0.12
+
+  mysql:
+    image: mysql:8.0.36    # 如果您是 arm64 架构：如 MacOS 的 M1，请修改镜像为 image: mysql/mysql-server:8.0.21
+    container_name: ai-mysql
+    hostname: ai-mysql
+    restart: always
+    ports:
+      - "13306:3306"  # host物理直接映射端口为13306
+    environment:
+      MYSQL_ROOT_PASSWORD: 'Abc12345!' # root管理员用户密码
+      MYSQL_DATABASE: 'ai' # 初始化启动时要创建的数据库的名称
+      MYSQL_USER: 'develop'
+      MYSQL_PASSWORD: 'Abc12345!'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "gva", "-pAa@6447985"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      network:
+        ipv4_address: 177.7.0.13
+
+  redis:
+    image: redis:6.0.6
+    container_name: ai-redis # 容器名
+    hostname: ai-redis
+    restart: always
+    ports:
+      - '16379:6379'
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - redis:/data
+    networks:
+      network:
+        ipv4_address: 177.7.0.14
